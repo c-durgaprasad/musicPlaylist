@@ -1,3 +1,6 @@
+import {Component} from 'react'
+import {IoSearchSharp} from 'react-icons/io5'
+import PlayList from './components/PlayList'
 import './App.css'
 
 const initialTracksList = [
@@ -85,13 +88,63 @@ const initialTracksList = [
 
 // Replace your code here
 
-const App = () => (
-  <div className="bg-container">
-    <div className="bg-picture">
-      <h1 className="ed-heading">Ed Sheeran</h1>
-      <p className="singer">Singer</p>
-    </div>
-  </div>
-)
+class App extends Component {
+  state = {searchInput: '', playList: initialTracksList}
+
+  changeSearchInput = event => {
+    const {playList} = this.state
+    const searchList = playList.filter(item =>
+      item.name.toLowerCase().includes(event.target.value),
+    )
+    this.setState({playList: searchList})
+  }
+
+  deleteItem = id => {
+    const {playList} = this.state
+    const deleteList = playList.filter(item => item.id !== id)
+    this.setState({playList: deleteList})
+  }
+
+  render() {
+    const {playList} = this.state
+    const noSongs = playList.length <= 0
+
+    return (
+      <div className="bg-container">
+        <div className="bg-picture">
+          <h1 className="ed-heading">Ed Sheeran</h1>
+          <p className="singer">Singer</p>
+        </div>
+        <div className="search-list">
+          <h1 className="play-list">Songs Playlist</h1>
+          <div className="search-input-container">
+            <input
+              type="search"
+              placeholder="Search"
+              className="search-input"
+              onChange={this.changeSearchInput}
+            />
+            <IoSearchSharp className="search-icon" />
+          </div>
+        </div>
+        {noSongs ? (
+          <div className="no-songs-view">
+            <p className="no-songs">No Songs Found</p>
+          </div>
+        ) : (
+          <ul className="ul-list">
+            {playList.map(item => (
+              <PlayList
+                details={item}
+                key={item.id}
+                deleteItem={this.deleteItem}
+              />
+            ))}
+          </ul>
+        )}
+      </div>
+    )
+  }
+}
 
 export default App
